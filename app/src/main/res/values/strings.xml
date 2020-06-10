@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">NewPlayer</string>
+
+    <string name="demo_music_name">红蓮崋</string>
+    <string name="demo_artist">LiSA</string>
+    <string name="top_list_hotsong">热歌榜</string>
+    <string name="top_list_hotsong_selected">热歌榜🧾</string>
+    <string name="top_list_newsong">新歌榜</string>
+    <string name="top_list_ticktock">抖音榜</string>
+    <string name="top_list_acg">ACG榜</string>
+    <string name="top_list_billboard">Billboard榜</string>
+    <string name="top_list_beatport">Beatport榜</string>
+
+    <string name="switch_2_spider_api">切换到爬虫API</string>
+    <string name="switch_2_music_api">切换到MUSIC API</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

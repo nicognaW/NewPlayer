@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/config">
+        <item
+            android:id="@+id/menu_item_switch_API"
+            android:title="@string/switch_2_spider_api" />
+    </group>
+
+    <group android:id="@+id/top_list_group_163">
+
+        <item
+            android:id="@+id/menu_item_hostsong"
+            android:title="@string/top_list_hotsong_selected" />
+        <item
+            android:id="@+id/menu_item_newsong"
+            android:title="@string/top_list_newsong" />
+    </group>
+
+    <group android:id="@+id/top_list_group_others">
+        <item
+            android:id="@+id/menu_item_ticktock"
+            android:title="@string/top_list_ticktock" />
+
+        <item
+            android:id="@+id/menu_item_ACG"
+            android:title="@string/top_list_acg" />
+
+        <item
+            android:id="@+id/menu_item_billboard"
+            android:title="@string/top_list_billboard" />
+
+        <item
+            android:id="@+id/menu_item_beatport"
+            android:title="@string/top_list_beatport" />
+
+    </group>
+</menu>
