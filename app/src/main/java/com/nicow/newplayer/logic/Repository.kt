@@ -32,8 +32,6 @@ object Repository {
 
     object MediaPlayerController {
 
-        // TODO: Use MediaPlaybackService
-
         private val mediaPlayer: MediaPlayer = MediaPlayer()
 
         var currentPLayingMusicLiveData: MutableLiveData<Music> = MutableLiveData()

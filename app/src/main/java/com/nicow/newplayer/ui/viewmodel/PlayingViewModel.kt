@@ -23,7 +23,6 @@ class PlayingViewModel : ViewModel() {
     *   4, 增加播放列表
     *   5, 增加歌单
     *   6, 增加搜索功能
-    *   8, 创建 本地/github Git仓库
     */
 
     companion object {
