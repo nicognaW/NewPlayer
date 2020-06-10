@@ -26,11 +26,8 @@ class PlayingViewModel : ViewModel() {
     */
 
     companion object {
-        fun playMusic(music: Music) {
-            if (music == currentPLayingMusicLiveData.value) {
-                return
-            }
-            currentPLayingMusicLiveData.value = music
+        fun changeMusicWithList(music: Music, list: ArrayList<Music>) {
+            Repository.MediaPlayerController.changeMusicWithList(music, list)
         }
 
         fun getCurrentMusic(): Music? =
@@ -38,6 +35,9 @@ class PlayingViewModel : ViewModel() {
 
         fun getCurrentMusicLiveData(): MutableLiveData<Music> =
             currentPLayingMusicLiveData
+
+        fun getCurrentList(): ArrayList<Music> =
+            Repository.MediaPlayerController.currentPlayingListLiveData.value!!
 
         fun clickPlayBtn() {
             Repository.MediaPlayerController.clickPlayBtn()

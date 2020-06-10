@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.nicow.newplayer.NewPlayerApplication
 import com.nicow.newplayer.R
+import com.nicow.newplayer.data.Music
 import com.nicow.newplayer.data.TopListMusic
 import com.nicow.newplayer.ui.activity.PlayingActivity
 import com.nicow.newplayer.ui.viewmodel.PlayingViewModel
@@ -37,7 +38,9 @@ class MusicListAdapter(var musicList: ArrayList<TopListMusic>) :
         viewHolder.itemView.setOnClickListener {
             val position = viewHolder.adapterPosition
             val item = musicList[position]
-            PlayingViewModel.playMusic(item)
+
+            @Suppress("UNCHECKED_CAST")
+            PlayingViewModel.changeMusicWithList(item, musicList as ArrayList<Music>)
         }
         viewHolder.itemView.setOnLongClickListener {
             val position = viewHolder.adapterPosition
@@ -46,7 +49,9 @@ class MusicListAdapter(var musicList: ArrayList<TopListMusic>) :
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.putExtra("Music", item)
             if (PlayingViewModel.getCurrentMusic() != item) {
-                PlayingViewModel.playMusic(item)
+
+                @Suppress("UNCHECKED_CAST")
+                PlayingViewModel.changeMusicWithList(item, musicList as ArrayList<Music>)
             }
             NewPlayerApplication.context.startActivity(intent)
             true

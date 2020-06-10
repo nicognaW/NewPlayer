@@ -32,16 +32,29 @@ object Repository {
 
     object MediaPlayerController {
 
+        enum class PlayMode {
+            SINGLELOOP, LISTLOOP, LISTRANDOM, ALLRANDOM
+        }
+
+        enum class ChangeMethod {
+            CLEAR, STAY, APPEND
+        }
+
         private val mediaPlayer: MediaPlayer = MediaPlayer()
 
         var currentPLayingMusicLiveData: MutableLiveData<Music> = MutableLiveData()
+
+        var currentPlayingListLiveData: MutableLiveData<ArrayList<Music>> = MutableLiveData()
+
+        var currentPlayMode: PlayMode = PlayMode.LISTLOOP
+
         var srcPath: String? = null
 
         fun initPlayer() {
             srcPath?.run {
                 mediaPlayer.apply {
                     setDataSource(srcPath)
-                    isLooping = true
+                    isLooping = false
                     prepare()
                 }
             }
@@ -53,6 +66,11 @@ object Repository {
                 mediaPlayer.reset()
                 initPlayer()
             }
+            currentPlayingListLiveData.observeForever {
+                if (!it.contains(currentPLayingMusicLiveData.value)) {
+                    currentPLayingMusicLiveData.value = it[0]
+                }
+            }
             mediaPlayer.setOnPreparedListener {
                 Toast.makeText(
                     NewPlayerApplication.context,
@@ -62,6 +80,77 @@ object Repository {
                     .show()
                 it.start()
             }
+
+            mediaPlayer.setOnCompletionListener {
+                when (currentPlayMode) {
+                    PlayMode.LISTLOOP -> {
+                        playNext()
+                    }
+                    else -> {
+                        return@setOnCompletionListener
+                    }
+                }
+
+            }
+        }
+
+        fun seekTo(i: Int) {
+            mediaPlayer.seekTo(i)
+        }
+
+        fun getDuration(): Int = mediaPlayer.duration
+
+        private fun playNext() {
+            when (currentPlayMode) {
+                PlayMode.LISTLOOP -> {
+                    if (currentPlayingListLiveData.value == null || currentPlayingListLiveData.value!!.isEmpty()) return
+
+                    val currentPosition = currentPlayingListLiveData.value!!.indexOf(
+                        currentPLayingMusicLiveData.value!!
+                    )
+
+                    if (currentPosition == currentPlayingListLiveData.value!!.lastIndex) {
+                        changeList(currentPlayingListLiveData.value!!)
+                    } else {
+                        val nextPosition = currentPosition + 1
+                        changeMusicWithNoList(
+                            currentPlayingListLiveData.value!![nextPosition],
+                            ChangeMethod.STAY
+                        )
+                    }
+                }
+                else -> return
+            }
+        }
+
+        fun setListLoop() {
+            currentPlayMode = PlayMode.LISTLOOP
+        }
+
+        fun changeList(list: ArrayList<Music>) {
+            currentPlayingListLiveData.value = list
+        }
+
+        fun changeMusicWithNoList(music: Music, method: ChangeMethod = ChangeMethod.STAY) {
+            when (method) {
+                ChangeMethod.STAY -> {
+                    currentPLayingMusicLiveData.value = music
+                }
+
+                ChangeMethod.APPEND -> {
+                    currentPlayingListLiveData.value?.add(music)
+                    currentPLayingMusicLiveData.value = music
+                }
+
+                ChangeMethod.CLEAR -> {
+                    changeMusicWithList(music, ArrayList())
+                }
+            }
+        }
+
+        fun changeMusicWithList(music: Music, list: ArrayList<Music>) {
+            currentPLayingMusicLiveData.value = music
+            currentPlayingListLiveData.value = list
         }
 
         fun clickPlayBtn() {

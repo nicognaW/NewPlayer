@@ -1,6 +1,7 @@
 package com.nicow.newplayer.ui.activity
 
 import android.os.Bundle
+import android.widget.SeekBar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -8,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.nicow.newplayer.R
 import com.nicow.newplayer.data.Music
 import com.nicow.newplayer.data.TopListMusic
+import com.nicow.newplayer.logic.Repository
 import com.nicow.newplayer.ui.viewmodel.PlayingViewModel
 import kotlinx.android.synthetic.main.activity_playing.*
 
@@ -45,9 +47,30 @@ class PlayingActivity : AppCompatActivity() {
         ab.title = music?.musicName
         ab.subtitle = music?.artist
 
+        PlayingViewModel.getCurrentMusicLiveData().observeForever {
+            ab.title = it.musicName
+            ab.subtitle = it.artist
+        }
+
         playing_play.setOnClickListener {
             PlayingViewModel.clickPlayBtn()
         }
+        play_seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val duration = Repository.MediaPlayerController.getDuration()
+                val target =
+                    (progress * duration / 100)
+                if (fromUser) {
+                    Repository.MediaPlayerController.seekTo(target)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
 
     }
 }
