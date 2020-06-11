@@ -16,11 +16,11 @@ class PlayingViewModel : ViewModel() {
     *     a, 增加专辑图
     *     b, 增加needle动画
     *     c, 增加下载按钮
-    *     d, 完善控制功能
+    *     d, 完善控制功能(Working)
     *   3, 完善动画
     *     a, activity切换动画
     *     b, menu下切换API后不收回menu
-    *   4, 增加播放列表
+    *   4, 增加播放列表(Done)
     *   5, 增加歌单
     *   6, 增加搜索功能
     */
