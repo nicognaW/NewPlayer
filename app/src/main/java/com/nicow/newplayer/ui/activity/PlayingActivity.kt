@@ -82,5 +82,27 @@ class PlayingActivity : AppCompatActivity() {
             Repository.MediaPlayerController.playNext()
         }
 
+        playing_mode.setOnClickListener {
+            val playMode = Repository.MediaPlayerController.currentPlayMode
+            when (playMode) {
+                Repository.MediaPlayerController.PlayMode.LISTLOOP -> {
+                    Repository.MediaPlayerController.setPlayMode(Repository.MediaPlayerController.PlayMode.SINGLELOOP)
+                    playing_mode.setImageResource(R.drawable.play_icn_loop_prs)
+                }
+                Repository.MediaPlayerController.PlayMode.SINGLELOOP -> {
+                    Repository.MediaPlayerController.setPlayMode(Repository.MediaPlayerController.PlayMode.LISTRANDOM)
+                    playing_mode.setImageResource(R.drawable.play_icn_list_rand)
+                }
+                Repository.MediaPlayerController.PlayMode.LISTRANDOM -> {
+                    Repository.MediaPlayerController.setPlayMode(Repository.MediaPlayerController.PlayMode.ALLRANDOM)
+                    playing_mode.setImageResource(R.drawable.play_icn_all_rand)
+                }
+                Repository.MediaPlayerController.PlayMode.ALLRANDOM -> {
+                    Repository.MediaPlayerController.setPlayMode(Repository.MediaPlayerController.PlayMode.LISTLOOP)
+                    playing_mode.setImageResource(R.drawable.play_icn_list_loop)
+                }
+            }
+        }
+
     }
 }
