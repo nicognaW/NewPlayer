@@ -50,7 +50,7 @@ object Repository {
 
         var srcPath: String? = null
 
-        fun initPlayer() {
+        private fun initPlayer() {
             srcPath?.run {
                 mediaPlayer.apply {
                     setDataSource(srcPath)
@@ -100,7 +100,7 @@ object Repository {
 
         fun getDuration(): Int = mediaPlayer.duration
 
-        private fun playNext() {
+        fun playNext() {
             when (currentPlayMode) {
                 PlayMode.LISTLOOP -> {
                     if (currentPlayingListLiveData.value == null || currentPlayingListLiveData.value!!.isEmpty()) return
@@ -115,6 +115,32 @@ object Repository {
                         val nextPosition = currentPosition + 1
                         changeMusicWithNoList(
                             currentPlayingListLiveData.value!![nextPosition],
+                            ChangeMethod.STAY
+                        )
+                    }
+                }
+                else -> return
+            }
+        }
+
+        fun playPre() {
+            when (currentPlayMode) {
+                PlayMode.LISTLOOP -> {
+                    if (currentPlayingListLiveData.value == null || currentPlayingListLiveData.value!!.isEmpty()) return
+
+                    val currentPosition = currentPlayingListLiveData.value!!.indexOf(
+                        currentPLayingMusicLiveData.value!!
+                    )
+
+                    if (currentPosition == 0) {
+                        changeMusicWithNoList(
+                            currentPlayingListLiveData.value!!.last(),
+                            ChangeMethod.STAY
+                        )
+                    } else {
+                        val prePosition = currentPosition + -1
+                        changeMusicWithNoList(
+                            currentPlayingListLiveData.value!![prePosition],
                             ChangeMethod.STAY
                         )
                     }

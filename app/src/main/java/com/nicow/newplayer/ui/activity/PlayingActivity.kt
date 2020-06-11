@@ -72,5 +72,13 @@ class PlayingActivity : AppCompatActivity() {
             }
         })
 
+        playing_pre.setOnClickListener {
+            Repository.MediaPlayerController.playPre()
+        }
+
+        playing_next.setOnClickListener {
+            Repository.MediaPlayerController.playNext()
+        }
+
     }
 }
