@@ -28,17 +28,25 @@ object Repository {
         MUSICAPI
     }
 
-    private var TopListRequest: AbstractTopListRequest? = MTopListRequest()
-
+    /**
+     *  Singleton class to control the MediaPlayer instance
+     *  this class will be deprecated in the future.
+     */
     object MediaPlayerController {
 
         enum class PlayMode {
             SINGLELOOP, LISTLOOP, LISTRANDOM, ALLRANDOM
         }
 
-        enum class ChangeMethod {
+        /**
+         * Enum class used to define what to do when the current playing music changes with no list
+         * changes.
+         */
+        enum class listChangeMethod {
             CLEAR, STAY, APPEND
         }
+
+        var srcPath: String? = null
 
         private val mediaPlayer: MediaPlayer = MediaPlayer()
 
@@ -48,17 +56,7 @@ object Repository {
 
         var currentPlayMode: PlayMode = PlayMode.LISTLOOP
 
-        var srcPath: String? = null
-
-        private fun initPlayer() {
-            srcPath?.run {
-                mediaPlayer.apply {
-                    setDataSource(srcPath)
-                    isLooping = false
-                    prepare()
-                }
-            }
-        }
+        val playStateLiveData = MutableLiveData<Boolean>()
 
         init {
             currentPLayingMusicLiveData.observeForever {
@@ -66,11 +64,13 @@ object Repository {
                 mediaPlayer.reset()
                 initPlayer()
             }
+
             currentPlayingListLiveData.observeForever {
                 if (!it.contains(currentPLayingMusicLiveData.value)) {
                     currentPLayingMusicLiveData.value = it[0]
                 }
             }
+
             mediaPlayer.setOnPreparedListener {
                 Toast.makeText(
                     NewPlayerApplication.context,
@@ -78,6 +78,7 @@ object Repository {
                     Toast.LENGTH_SHORT
                 )
                     .show()
+                playStateLiveData.value = true
                 it.start()
             }
 
@@ -90,15 +91,27 @@ object Repository {
                         return@setOnCompletionListener
                     }
                 }
-
+                playStateLiveData.value = false
             }
         }
+
+        private fun initPlayer() {
+            srcPath?.run {
+                mediaPlayer.apply {
+                    setDataSource(srcPath)
+                    isLooping = false
+                    prepare()
+                }
+            }
+        }
+
+        fun getDuration(): Int = mediaPlayer.duration
+
+        fun getPlayState(): Boolean = mediaPlayer.isPlaying
 
         fun seekTo(i: Int) {
             mediaPlayer.seekTo(i)
         }
-
-        fun getDuration(): Int = mediaPlayer.duration
 
         fun playNext() {
             when (currentPlayMode) {
@@ -115,7 +128,7 @@ object Repository {
                         val nextPosition = currentPosition + 1
                         changeMusicWithNoList(
                             currentPlayingListLiveData.value!![nextPosition],
-                            ChangeMethod.STAY
+                            listChangeMethod.STAY
                         )
                     }
                 }
@@ -135,13 +148,13 @@ object Repository {
                     if (currentPosition == 0) {
                         changeMusicWithNoList(
                             currentPlayingListLiveData.value!!.last(),
-                            ChangeMethod.STAY
+                            listChangeMethod.STAY
                         )
                     } else {
                         val prePosition = currentPosition + -1
                         changeMusicWithNoList(
                             currentPlayingListLiveData.value!![prePosition],
-                            ChangeMethod.STAY
+                            listChangeMethod.STAY
                         )
                     }
                 }
@@ -149,44 +162,73 @@ object Repository {
             }
         }
 
-        fun setListLoop() {
-            currentPlayMode = PlayMode.LISTLOOP
+        fun setPlayMode(playMode: PlayMode) {
+            currentPlayMode = playMode
+            when (currentPlayMode) {
+                PlayMode.SINGLELOOP -> mediaPlayer.isLooping = true
+                else -> return
+            }
         }
 
+        /**
+         * Change the play list.
+         * This function usually changes the current playing music in currentPlayingListLiveData's
+         * observer.
+         */
         fun changeList(list: ArrayList<Music>) {
             currentPlayingListLiveData.value = list
         }
 
-        fun changeMusicWithNoList(music: Music, method: ChangeMethod = ChangeMethod.STAY) {
+        /**
+         * This method will change the current playing music with the given music and lisgchangemethod.
+         * @param music Music to change
+         * @param method listChangeMethod of the operate, for STAY, it will only change the music to
+         * livedata, for APPEND, it will add the music param to the current playing music list, for
+         * clear, it will call the changeMusicWithList method with an empty list.
+         */
+        fun changeMusicWithNoList(music: Music, method: listChangeMethod = listChangeMethod.STAY) {
             when (method) {
-                ChangeMethod.STAY -> {
+                listChangeMethod.STAY -> {
                     currentPLayingMusicLiveData.value = music
                 }
 
-                ChangeMethod.APPEND -> {
+                listChangeMethod.APPEND -> {
                     currentPlayingListLiveData.value?.add(music)
                     currentPLayingMusicLiveData.value = music
                 }
 
-                ChangeMethod.CLEAR -> {
+                listChangeMethod.CLEAR -> {
                     changeMusicWithList(music, ArrayList())
                 }
             }
         }
 
+        /**
+         * Sync change the current playing music and list, usually called to play a new music from
+         * another list.
+         * @param music Music to play.
+         * @param list ArrayList<Music> of music.
+         */
         fun changeMusicWithList(music: Music, list: ArrayList<Music>) {
             currentPLayingMusicLiveData.value = music
             currentPlayingListLiveData.value = list
         }
 
+        /**
+         * Only called when user click the play/pause button.
+         */
         fun clickPlayBtn() {
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.pause()
+                playStateLiveData.value = false
             } else {
                 mediaPlayer.start()
+                playStateLiveData.value = true
             }
         }
     }
+
+    private var TopListRequest: AbstractTopListRequest? = MTopListRequest()
 
     /**
      * Set the api for backend data

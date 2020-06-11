@@ -6,12 +6,12 @@ import com.nicow.newplayer.data.Music
 import com.nicow.newplayer.logic.Repository
 import com.nicow.newplayer.logic.Repository.MediaPlayerController.currentPLayingMusicLiveData
 
-class PlayingViewModel : ViewModel() {
+object PlayingViewModel : ViewModel() {
 
 
     /* TODO
     *   1，重写PlayingViewModel
-    *     用object写为单例类 / 在多个activity中实例化
+    *     用object写为单例类（✔） / 在多个activity中实例化
     *   2, 完善播放控制器
     *     a, 增加专辑图
     *     b, 增加needle动画
@@ -25,22 +25,20 @@ class PlayingViewModel : ViewModel() {
     *   6, 增加搜索功能
     */
 
-    companion object {
-        fun changeMusicWithList(music: Music, list: ArrayList<Music>) {
-            Repository.MediaPlayerController.changeMusicWithList(music, list)
-        }
+    fun changeMusicWithList(music: Music, list: ArrayList<Music>) {
+        Repository.MediaPlayerController.changeMusicWithList(music, list)
+    }
 
-        fun getCurrentMusic(): Music? =
-            currentPLayingMusicLiveData.value
+    fun getCurrentMusic(): Music? =
+        currentPLayingMusicLiveData.value
 
-        fun getCurrentMusicLiveData(): MutableLiveData<Music> =
-            currentPLayingMusicLiveData
+    fun getCurrentMusicLiveData(): MutableLiveData<Music> =
+        currentPLayingMusicLiveData
 
-        fun getCurrentList(): ArrayList<Music> =
-            Repository.MediaPlayerController.currentPlayingListLiveData.value!!
+    fun getCurrentList(): ArrayList<Music> =
+        Repository.MediaPlayerController.currentPlayingListLiveData.value!!
 
-        fun clickPlayBtn() {
-            Repository.MediaPlayerController.clickPlayBtn()
-        }
+    fun clickPlayBtn() {
+        Repository.MediaPlayerController.clickPlayBtn()
     }
 }

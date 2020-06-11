@@ -5,11 +5,11 @@ import android.widget.SeekBar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProviders
 import com.nicow.newplayer.R
 import com.nicow.newplayer.data.Music
 import com.nicow.newplayer.data.TopListMusic
 import com.nicow.newplayer.logic.Repository
+import com.nicow.newplayer.logic.Repository.MediaPlayerController.playStateLiveData
 import com.nicow.newplayer.ui.viewmodel.PlayingViewModel
 import kotlinx.android.synthetic.main.activity_playing.*
 
@@ -18,9 +18,6 @@ class PlayingActivity : AppCompatActivity() {
     private lateinit var toolbar: Toolbar
 
     private lateinit var ab: ActionBar
-
-
-    private lateinit var viewModel: PlayingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +31,6 @@ class PlayingActivity : AppCompatActivity() {
             music = intent.extras?.get("Music") as TopListMusic
         }
 
-
-        viewModel = ViewModelProviders.of(this).get(PlayingViewModel::class.java)
-
         toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         ab = supportActionBar!!
@@ -44,12 +38,20 @@ class PlayingActivity : AppCompatActivity() {
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        ab.title = music?.musicName
-        ab.subtitle = music?.artist
-
         PlayingViewModel.getCurrentMusicLiveData().observeForever {
             ab.title = it.musicName
             ab.subtitle = it.artist
+        }
+
+        playStateLiveData.observeForever {
+            when (it) {
+                true -> {
+                    playing_play.setImageResource(R.drawable.play_rdi_btn_pause)
+                }
+                false, null -> {
+                    playing_play.setImageResource(R.drawable.play_rdi_btn_play)
+                }
+            }
         }
 
         playing_play.setOnClickListener {

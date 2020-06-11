@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.nicow.newplayer.NewPlayerApplication
 import com.nicow.newplayer.R
+import com.nicow.newplayer.logic.Repository.MediaPlayerController.playStateLiveData
 import com.nicow.newplayer.ui.activity.PlayingActivity
 import com.nicow.newplayer.ui.viewmodel.PlayingViewModel
 import kotlinx.android.synthetic.main.fragment_bottom.*
@@ -35,6 +36,16 @@ class BottomFragment : Fragment() {
         PlayingViewModel.getCurrentMusicLiveData().observeForever {
             bottom_music_name?.text = it.musicName
             bottom_artist?.text = it.artist
+        }
+        playStateLiveData.observeForever {
+            when (it) {
+                true -> {
+                    bottom_pause.setImageResource(R.drawable.play_rdi_btn_pause)
+                }
+                false, null -> {
+                    bottom_pause.setImageResource(R.drawable.play_rdi_btn_play)
+                }
+            }
         }
     }
 
