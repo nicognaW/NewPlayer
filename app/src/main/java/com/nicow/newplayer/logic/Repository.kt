@@ -114,49 +114,68 @@ object Repository {
         }
 
         fun playNext() {
+            fun playTargetAsNext(target: Int) {
+                val currentPosition = currentPlayingListLiveData.value!!.indexOf(
+                    currentPLayingMusicLiveData.value!!
+                )
+                val lastPosition = currentPlayingListLiveData.value!!.lastIndex
+                if (currentPlayingListLiveData.value == null || currentPlayingListLiveData.value!!.isEmpty()) return
+                if (currentPosition == lastPosition) {
+                    changeList(currentPlayingListLiveData.value!!)
+                } else {
+                    val nextPosition = target
+                    changeMusicWithNoList(
+                        currentPlayingListLiveData.value!![nextPosition],
+                        listChangeMethod.STAY
+                    )
+                }
+            }
+
+            val currentPosition = currentPlayingListLiveData.value!!.indexOf(
+                currentPLayingMusicLiveData.value!!
+            )
+            val lastPosition = currentPlayingListLiveData.value!!.lastIndex
             when (currentPlayMode) {
                 PlayMode.LISTLOOP -> {
-                    if (currentPlayingListLiveData.value == null || currentPlayingListLiveData.value!!.isEmpty()) return
-
-                    val currentPosition = currentPlayingListLiveData.value!!.indexOf(
-                        currentPLayingMusicLiveData.value!!
-                    )
-
-                    if (currentPosition == currentPlayingListLiveData.value!!.lastIndex) {
-                        changeList(currentPlayingListLiveData.value!!)
-                    } else {
-                        val nextPosition = currentPosition + 1
-                        changeMusicWithNoList(
-                            currentPlayingListLiveData.value!![nextPosition],
-                            listChangeMethod.STAY
-                        )
-                    }
+                    playTargetAsNext(currentPosition + 1)
+                }
+                PlayMode.LISTRANDOM -> {
+                    playTargetAsNext((0..lastPosition).random())
                 }
                 else -> return
             }
         }
 
         fun playPre() {
+            fun playTargetAsPre(target: Int) {
+                if (currentPlayingListLiveData.value == null || currentPlayingListLiveData.value!!.isEmpty()) return
+                val currentPosition = currentPlayingListLiveData.value!!.indexOf(
+                    currentPLayingMusicLiveData.value!!
+                )
+                if (currentPosition == 0) {
+                    changeMusicWithNoList(
+                        currentPlayingListLiveData.value!!.last(),
+                        listChangeMethod.STAY
+                    )
+                } else {
+                    val prePosition = target
+                    changeMusicWithNoList(
+                        currentPlayingListLiveData.value!![prePosition],
+                        listChangeMethod.STAY
+                    )
+                }
+            }
+
+            val currentPosition = currentPlayingListLiveData.value!!.indexOf(
+                currentPLayingMusicLiveData.value!!
+            )
+            val lastPosition = currentPlayingListLiveData.value!!.lastIndex
             when (currentPlayMode) {
                 PlayMode.LISTLOOP -> {
-                    if (currentPlayingListLiveData.value == null || currentPlayingListLiveData.value!!.isEmpty()) return
-
-                    val currentPosition = currentPlayingListLiveData.value!!.indexOf(
-                        currentPLayingMusicLiveData.value!!
-                    )
-
-                    if (currentPosition == 0) {
-                        changeMusicWithNoList(
-                            currentPlayingListLiveData.value!!.last(),
-                            listChangeMethod.STAY
-                        )
-                    } else {
-                        val prePosition = currentPosition + -1
-                        changeMusicWithNoList(
-                            currentPlayingListLiveData.value!![prePosition],
-                            listChangeMethod.STAY
-                        )
-                    }
+                    playTargetAsPre(currentPosition - 1)
+                }
+                PlayMode.LISTRANDOM -> {
+                    playTargetAsPre((0..lastPosition).random())
                 }
                 else -> return
             }
