@@ -1,5 +1,5 @@
 # NewPlayer
-NewPlayer is a android music player application build with MVVM pattern.
+NewPlayer is an android music player application build with MVVM pattern.
 
 Featured toplists of music.163.com for current version.
 
